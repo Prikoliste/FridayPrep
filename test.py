@@ -44,7 +44,7 @@ async def save_file_to_db(user_table_id: int, file_path: str):
     conn.close()
 
 async def get_user_id_by_tg_id(tg_id: int):
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('friday_data.db')
     c = conn.cursor()
     data = c.execute('SELECT id  FROM User WHERE chat_id = ?', (tg_id,)).fetchone()
     conn.close()
