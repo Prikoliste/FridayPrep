@@ -3,6 +3,8 @@ from aiogram.filters.command import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
+from base import orm as db
+
 start_router = Router()
 
 class StartStatesGroup(StatesGroup):
@@ -33,9 +35,14 @@ async def start(message: types.Message, state: FSMContext):
 # Existing customer
 @start_router.message(StartStatesGroup.contract)
 async def save_name(message: types.Message, state: FSMContext):
-    if message.text is int and len(message.text) == 9:
+    citizen_data = await db.get_citizen(message.text)
+    if not citizen_data:
+        await message.answer("Contract number was wrong")
+        return
+    if message.text.isdigit() and len(message.text) == 9:
         await state.update_data(contract=message.text)
-        await state.set_state(StartStatesGroup.contract)
+        pass
+
     else:
         await message.answer("Please enter your contract number of 9 numbers")
         await state.set_state(StartStatesGroup.contract)
