@@ -57,7 +57,11 @@
 #
 # asyncio.run(dp.start_polling(bot))
 
+
+
 import easyocr
+
 reader = easyocr.Reader(['en']) # this needs to run only once to load the model into memory
-result = reader.readtext('numbers.jpg')
+result = reader.readtext("files/photos/AgACAgIAAxkBAAIBi2ezk5inh7aPCaVcyl2ge7_Gyg7aAALq7TEb1p-gSa_SIwABo6jQRwEAAwIAA3gAAzYE.jpg",detail=False)
+
 print(result)

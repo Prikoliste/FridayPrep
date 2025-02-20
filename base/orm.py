@@ -18,18 +18,18 @@ async def get_citizen(citizen_contract:str):
     conn.close()
     return citizen_data
 
-async def save_photo(citizen_contract:str,photo_name:str):
+async def save_photo(citizen_contract:str,photo_name:str,cost:int):
     conn, cursor = await connect_to_db()
     citizen = await get_citizen(citizen_contract)
     citizen_id = citizen[0]
     photo_path = PHOTOS_PATH + '/' + photo_name
     cursor.execute(
         f'''INSERT INTO bills
-        (citizen_id, photo, cost) VALUES("{citizen_id}","{photo_path}","1")'''
+        (citizen_id, photo, cost) VALUES("{citizen_id}","{photo_path}","{cost}")'''
     )
     conn.commit()
     conn.close()
 
 # import asyncio
 # asyncio.run(save_photo('1234567890','AgACAgIAAxkBAAP0Z64Iigi_caDFrjXZukm6eEaGBlMAAvrwMRvxlXFJQofe9WehcBoBAAMCAAN5AAM2BA.jpg'))
-#
+

@@ -1,5 +1,5 @@
 from email.charset import add_alias
-
+import easyocr
 from aiogram import Router, types
 from aiogram.filters.command import Command
 from aiogram.fsm.state import State, StatesGroup
@@ -61,9 +61,12 @@ async def save_photo(message: types.Message, state: FSMContext):
         await message.bot.download_file(file.file_path, file_path)
 
         data = await state.get_data()
-        await db.save_photo(data.get("contract"), photo_name)
 
-        state.update_data(file_path = file_path)
+        ### ТУТ МНЕ БЫЛО ЛЕНЬ ПИСАТЬ АЛГОРИТМ ДЛЯ ПОДСЧЕТА
+        await state.update_data(file_path = file_path)
+        cost = await analyze_photo(state,message)
+        await db.save_photo(data.get("contract"), photo_name, cost * 0.9)
+
         await message.answer("Photo saved")
 
     else:
@@ -73,10 +76,13 @@ async def save_photo(message: types.Message, state: FSMContext):
 async def analyze_photo(state: FSMContext, message: types.Message):
     data = await state.get_data()
     file_path = data["file_path"]
+    reader = easyocr.Reader(['en'])  # this needs to run only once to load the model into memory
+    result = reader.readtext(file_path, detail=False, allowlist='0123456789', width_ths=1, height_ths=0.1, rotation_info=[90, 180 ,270])
+    result = result[0]
+    result = int(result.replace(" ", ""))
 
-    await message.answer(data['full_name'] + data['ph_number'])
-    await state.clear()
-
+    await message.answer(f'{result}')
+    return result
 
 # # New customer
 # @start_router.message(StartStatesGroup.full_name_w8ing)
